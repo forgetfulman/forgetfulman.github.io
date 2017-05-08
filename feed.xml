@@ -1,17 +1,124 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="http://jekyllrb.com" version="3.4.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-04-10T10:32:08+01:00</updated><id>/</id><title type="html">Tech Rambles</title><subtitle>Musings on technology, from software crafstmanship to tech for kids...
-</subtitle><entry><title type="html">Reflections on GildedRose</title><link href="/projects/2017/04/09/gildedrose-reflections.html" rel="alternate" type="text/html" title="Reflections on GildedRose" /><published>2017-04-09T11:00:00+01:00</published><updated>2017-04-09T11:00:00+01:00</updated><id>/projects/2017/04/09/gildedrose-reflections</id><content type="html" xml:base="/projects/2017/04/09/gildedrose-reflections.html">&lt;p&gt;The GildedRose project (https://github.com/forgetfulman/GildedRose) can provide some valuable
-lessons in the difficulties of maintaining legacy code and how refactoring can simplify application maintenance.
-I have also found it useful as a playground for practicing programming techniques and learning
-aspects of the chosen language of implementation.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="http://jekyllrb.com" version="3.4.0">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2017-05-08T09:15:28+01:00</updated><id>/</id><title type="html">Tech Rambles</title><subtitle>Musings on technology, from software crafstmanship to tech for kids...
+</subtitle><entry><title type="html">Reflections on GildedRose</title><link href="/projects/2017/05/04/gildedrose-reflections.html" rel="alternate" type="text/html" title="Reflections on GildedRose" /><published>2017-05-04T11:00:00+01:00</published><updated>2017-05-04T11:00:00+01:00</updated><id>/projects/2017/05/04/gildedrose-reflections</id><content type="html" xml:base="/projects/2017/05/04/gildedrose-reflections.html">&lt;p&gt;In my &lt;a href=&quot;https://github.com/forgetfulman/GildedRose/tree/making-good-method-reflection&quot;&gt;latest take&lt;/a&gt; 
+on a solution to this problem I looked into the Java Reflections framework, something I have 
+seen used effectively in production applications for simplifying the addition of new components.&lt;/p&gt;
 
-&lt;p&gt;The goal of my latest exercise was to reduce the maintenance cost for GildedRose, simplifying the addition
-of a new Item type.&lt;/p&gt;
+&lt;p&gt;For this approach I created the concept of an Assessor - the Gilded Rose Inn passes an 
+Item to the Assessor, which evaluates and updates the Item’s quality.&lt;/p&gt;
 
-&lt;p&gt;To achieve this I turned to the Java Reflections framework, a feature I have seen used effectively in industry 
-applications and one that can provide a container in GildedRose in to which strategies for dealing with new
-Item types can be dropped.&lt;/p&gt;</content><author><name></name></author><category term="projects" /><summary type="html">The GildedRose project (https://github.com/forgetfulman/GildedRose) can provide some valuable lessons in the difficulties of maintaining legacy code and how refactoring can simplify application maintenance. I have also found it useful as a playground for practicing programming techniques and learning aspects of the chosen language of implementation.</summary></entry><entry><title type="html">Cuboto</title><link href="/kids_tech/2017/04/09/cuboto.html" rel="alternate" type="text/html" title="Cuboto" /><published>2017-04-09T11:00:00+01:00</published><updated>2017-04-09T11:00:00+01:00</updated><id>/kids_tech/2017/04/09/cuboto</id><content type="html" xml:base="/kids_tech/2017/04/09/cuboto.html"></content><author><name></name></author><category term="kids_tech" /><summary type="html"></summary></entry><entry><title type="html">Welcome to Kids Tech!</title><link href="/kids_tech/2017/03/02/welcome.html" rel="alternate" type="text/html" title="Welcome to Kids Tech!" /><published>2017-03-02T10:00:00+00:00</published><updated>2017-03-02T10:00:00+00:00</updated><id>/kids_tech/2017/03/02/welcome</id><content type="html" xml:base="/kids_tech/2017/03/02/welcome.html">&lt;p&gt;As a father of three young boys, the eldest of who is getting into using tablets and playing Minecraft, 
+&lt;p&gt;The Assessor uses an ageing profile to evaluate an Item’s quality. The profile is a collection 
+of ageing phases - an ageing phase is an association between the “sell in” counter and a quality 
+change rate.&lt;/p&gt;
+
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+&lt;p&gt;The Assessor uses a different reflected method from a profile class (ItemAgeingProfile) to 
+determine an Item’s ageing profile. This method populates the ageing phase collection with 
+the necessary phases to implement the new ageing algorithm.&lt;/p&gt;
+
+&lt;p&gt;The ageing phase is implemented as a class (AgeingPhase) the “sell in” counter and quality change 
+rate as properties. The collection of ageing phases is implemented as a First Class Collection 
+i.e. a class that understands how the ageing phases can be manipulated. This collection (ItemAgeingPhaseCollection) 
+is populated via a reflected method.&lt;/p&gt;
+
+&lt;p&gt;To support a new Item type with a new ageing profile the only change is to drop a new (appropriately 
+annotated) method into the ItemAgeingProfile class. Job done.&lt;/p&gt;
+
+&lt;h2 id=&quot;limitations&quot;&gt;Limitations&lt;/h2&gt;
+&lt;p&gt;Using reflection to create a framework supporting new Item ageing profiles appears sound. 
+Yet the use of method reflection is not optimal.&lt;/p&gt;
+
+&lt;p&gt;The most obvious limitation is that supporting many Item types becomes unwieldy. The ItemAgeingProfile 
+class growing too large with added ageing methods.&lt;/p&gt;
+
+&lt;h2 id=&quot;next-steps&quot;&gt;Next Steps&lt;/h2&gt;
+&lt;p&gt;A further experiment would be to replace method reflection with class reflection. This addresses 
+ItemAgeingProfile class size with Ageing profiles algorithms implemented as new classes.&lt;/p&gt;
+
+&lt;p&gt;The Item class also needs work - it feels more appropriate for the Item to handle its own ageing, 
+even if the Assessor selects the appropriate profile.&lt;/p&gt;
+
+&lt;p&gt;It would also be a challenge to implement a further Calisthenics rule and restrict the Item class
+to two properties.&lt;/p&gt;</content><author><name></name></author><category term="projects" /><summary type="html">In my latest take on a solution to this problem I looked into the Java Reflections framework, something I have seen used effectively in production applications for simplifying the addition of new components.</summary></entry><entry><title type="html">Oracle Live for the Code London 2017</title><link href="/general/2017/04/20/Oracle-Live-Code.html" rel="alternate" type="text/html" title="Oracle Live for the Code London 2017" /><published>2017-04-20T11:00:00+01:00</published><updated>2017-04-20T11:00:00+01:00</updated><id>/general/2017/04/20/Oracle-Live-Code</id><content type="html" xml:base="/general/2017/04/20/Oracle-Live-Code.html">&lt;p&gt;Oracle Live for the Code was a developer focused event, taking place at Code Node in London 
+and featuring 20 talks across the day.&lt;/p&gt;
+
+&lt;p&gt;These talks centered around some common themes:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;* Oracle's Bare Metal cloud offering
+* New features of Java 9
+* Tools and platforms for Microservices
+* Using Docker for Microservice deployment
+* Using Events to co-ordinate Microservices
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&quot;oracles-bare-metal-cloud&quot;&gt;Oracle’s Bare Metal Cloud&lt;/h2&gt;
+&lt;p&gt;Deepak Patil, Oracle Vice President Product Development, showcased the company’s “Data Center 
+of the Future”. The emphasis of the talk, and a sentiment repeated through the day, was to 
+free of developers to concentrate on development. The role of cloud service providers is to 
+take care of the network and server infrastructure.&lt;/p&gt;
+
+&lt;p&gt;Deepak and Ubuntu’s Marks Shuttleworth highlighted the strength of Oracle Cloud’s network abstraction 
+layer. This provides scalable clusters for organisations, duplicated at the L3 network layer. 
+Any two network nodes can communicate at full bandwidth within the Oracle cloud. The upshot 
+is a performant cloud infrastructure with repeatable, scriptable deployments.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://youtu.be/Y2GuI8Fl43A?t=52m4s&quot;&gt;Deepak’s Keynote&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;tools-and-platforms-for-microservice-deployment&quot;&gt;Tools and Platforms for Microservice Deployment&lt;/h2&gt;
+&lt;p&gt;Having a cutting edge data center with scalable service means little without the tools for deployment.
+&lt;a href=&quot;https://www.docker.com/&quot;&gt;Docker&lt;/a&gt; was the tool of the day, demonstrated in the &lt;a href=&quot;https://youtu.be/Y2GuI8Fl43A&quot;&gt;technical keynote&lt;/a&gt; 
+and used as the basis for several of the microservice technical talks.&lt;/p&gt;
+
+&lt;h2 id=&quot;using-events-to-co-ordinate-microservices&quot;&gt;Using Events to Co-ordinate Microservices&lt;/h2&gt;
+&lt;p&gt;Microservices can pave the way for scaleable, performant services. In an enterprise environment 
+microservices are often carved from legacy monolith applications. Business processes are likely 
+to rely on these microservices interacting. The goal is for asynchronous interaction, preventing 
+resurrection of the monolith with tight-coupling.&lt;/p&gt;
+
+&lt;p&gt;More than one speaker presented Event Bus solutions, highlighting &lt;a href=&quot;https://kafka.apache.org/&quot;&gt;Apache Kafka&lt;/a&gt;
+ in particular.&lt;/p&gt;
+
+&lt;p&gt;Applications publish and subscribe to Event Bus streams. When an application does something 
+of note it sends an event to the Bus. Subscribing applications receive a notification from 
+the relevant Event Bus stream. The upshot is that a publishing application can fire and forget 
+an event, without having to wait around for a receipt confirmation from a listening system.&lt;/p&gt;
+
+&lt;h2 id=&quot;new-features-of-java-9&quot;&gt;New features of Java 9&lt;/h2&gt;
+&lt;p&gt;Two talks presented new features of Java 9. The following topics generated more discussion.&lt;/p&gt;
+
+&lt;h3 id=&quot;modules-project-jigsaw&quot;&gt;Modules (Project Jigsaw)&lt;/h3&gt;
+&lt;p&gt;After 10 years in the making modules will be making an appearance. Vaunted as a rescuer from
+class-path hell the general feeling was that they are not yet fully baked. Tight coupling
+between modules with this language release seems to create the potential for more problems
+than they solve. Something to watch in Java 10 once the kinks are ironed out.&lt;/p&gt;
+
+&lt;h3 id=&quot;jlink&quot;&gt;Jlink&lt;/h3&gt;
+&lt;p&gt;This provides the potential for delivering customised JRE, tailored to deliver only as much
+as your project requires. This should lead to smaller software stacks and the delivery of
+leaner microservices.&lt;/p&gt;
+
+&lt;h3 id=&quot;class-multi-versioning&quot;&gt;Class Multi-versioning&lt;/h3&gt;
+&lt;p&gt;Probably a really bad idea, this feature will allow the bundling of multiple class versions 
+within a package to support different JRE version. My initial take was that this would be 
+recipe for disaster and introduce a complicating factor in defect analysis.&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://youtu.be/9PFcTwRlASY?t=1456&quot;&gt;What’s Cool in Java 8, and New in Java 9&lt;/a&gt; 
+Oracle presentation provides more detail.&lt;/p&gt;</content><author><name></name></author><category term="general" /><summary type="html">Oracle Live for the Code was a developer focused event, taking place at Code Node in London and featuring 20 talks across the day.</summary></entry><entry><title type="html">Cuboto</title><link href="/kids_tech/2017/04/09/cuboto.html" rel="alternate" type="text/html" title="Cuboto" /><published>2017-04-09T11:00:00+01:00</published><updated>2017-04-09T11:00:00+01:00</updated><id>/kids_tech/2017/04/09/cuboto</id><content type="html" xml:base="/kids_tech/2017/04/09/cuboto.html"></content><author><name></name></author><category term="kids_tech" /><summary type="html"></summary></entry><entry><title type="html">GildedRose</title><link href="/projects/2017/04/08/gildedrose.html" rel="alternate" type="text/html" title="GildedRose" /><published>2017-04-08T11:00:00+01:00</published><updated>2017-04-08T11:00:00+01:00</updated><id>/projects/2017/04/08/gildedrose</id><content type="html" xml:base="/projects/2017/04/08/gildedrose.html">&lt;p&gt;The &lt;a href=&quot;https://github.com/forgetfulman/GildedRose&quot;&gt;GildedRose&lt;/a&gt; project provides valuable lessons 
+on the difficulties of maintaining legacy code.&lt;/p&gt;
+
+&lt;p&gt;It is a useful tool for communicating Software Craftsmanship techniques. This includes the 
+process of safe refactoring, applying principles for creating maintainable code.&lt;/p&gt;
+
+&lt;p&gt;William Durand’s &lt;a href=&quot;http://williamdurand.fr/2013/06/03/object-calisthenics/&quot;&gt;post&lt;/a&gt; 
+on Object Calisthenics describes various refactoring techniques. I have attempted to apply 
+his suggestions and they provide interesting thought exercises if nothing else!&lt;/p&gt;
+
+&lt;p&gt;GildedRose is also useful as a playground for practicing programming techniques.&lt;/p&gt;
+
+&lt;p&gt;In series of experiments I’ll be implementing a variety of solutions. These range from optimising 
+the code for maintenance, to trying out different coding techniques.&lt;/p&gt;</content><author><name></name></author><category term="projects" /><summary type="html">The GildedRose project provides valuable lessons on the difficulties of maintaining legacy code.</summary></entry><entry><title type="html">Welcome to Kids Tech!</title><link href="/kids_tech/2017/03/02/welcome.html" rel="alternate" type="text/html" title="Welcome to Kids Tech!" /><published>2017-03-02T10:00:00+00:00</published><updated>2017-03-02T10:00:00+00:00</updated><id>/kids_tech/2017/03/02/welcome</id><content type="html" xml:base="/kids_tech/2017/03/02/welcome.html">&lt;p&gt;As a father of three young boys, the eldest of whom is getting into using tablets and playing Minecraft, 
 I am on the lookout for kids tech products that can entertain and teach.
-In the Kids Tech series of posts I’ll be taking a look at the interesting technology / software products that catch my eye.&lt;/p&gt;</content><author><name></name></author><category term="kids_tech" /><summary type="html">As a father of three young boys, the eldest of who is getting into using tablets and playing Minecraft, I am on the lookout for kids tech products that can entertain and teach. In the Kids Tech series of posts I’ll be taking a look at the interesting technology / software products that catch my eye.</summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="/general/2017/02/23/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2017-02-23T22:19:39+00:00</published><updated>2017-02-23T22:19:39+00:00</updated><id>/general/2017/02/23/welcome-to-jekyll</id><content type="html" xml:base="/general/2017/02/23/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+In the Kids Tech series of posts I’ll be taking a look at the interesting technology / software products that catch my eye.&lt;/p&gt;</content><author><name></name></author><category term="kids_tech" /><summary type="html">As a father of three young boys, the eldest of whom is getting into using tablets and playing Minecraft, I am on the lookout for kids tech products that can entertain and teach. In the Kids Tech series of posts I’ll be taking a look at the interesting technology / software products that catch my eye.</summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="/general/2017/02/23/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2017-02-23T22:19:39+00:00</published><updated>2017-02-23T22:19:39+00:00</updated><id>/general/2017/02/23/welcome-to-jekyll</id><content type="html" xml:base="/general/2017/02/23/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
 
 &lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
 

@@ -2,7 +2,7 @@
 <html lang="en-us">
   <head>
     <meta charset="UTF-8">
-    <title>Welcome to Jekyll!</title>
+    <title>Reflections on GildedRose</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#157878">
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
@@ -41,24 +41,50 @@
 
     <section class="main-content">
       <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
-  <h1>Welcome to Jekyll!</h1>
-  <p class="post-meta"><time datetime="2017-02-23T22:19:39+00:00" itemprop="datePublished">Feb 23, 2017</time></p>
+  <h1>Reflections on GildedRose</h1>
+  <p class="post-meta"><time datetime="2017-05-04T11:00:00+01:00" itemprop="datePublished">May 4, 2017</time></p>
 
   <div class="post-content" itemprop="articleBody">
-    <p>You’ll find this post in your <code class="highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+    <p>In my <a href="https://github.com/forgetfulman/GildedRose/tree/making-good-method-reflection">latest take</a> 
+on a solution to this problem I looked into the Java Reflections framework, something I have 
+seen used effectively in production applications for simplifying the addition of new components.</p>
 
-<p>To add new posts, simply add a file in the <code class="highlighter-rouge">_posts</code> directory that follows the convention <code class="highlighter-rouge">YYYY-MM-DD-name-of-post.ext</code> and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+<p>For this approach I created the concept of an Assessor - the Gilded Rose Inn passes an 
+Item to the Assessor, which evaluates and updates the Item’s quality.</p>
 
-<p>Jekyll also offers powerful support for code snippets:</p>
+<p>The Assessor uses an ageing profile to evaluate an Item’s quality. The profile is a collection 
+of ageing phases - an ageing phase is an association between the “sell in” counter and a quality 
+change rate.</p>
 
-<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
-  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
-<span class="k">end</span>
-<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
-<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
+<h2 id="implementation">Implementation</h2>
+<p>The Assessor uses a different reflected method from a profile class (ItemAgeingProfile) to 
+determine an Item’s ageing profile. This method populates the ageing phase collection with 
+the necessary phases to implement the new ageing algorithm.</p>
 
-<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>
+<p>The ageing phase is implemented as a class (AgeingPhase) the “sell in” counter and quality change 
+rate as properties. The collection of ageing phases is implemented as a First Class Collection 
+i.e. a class that understands how the ageing phases can be manipulated. This collection (ItemAgeingPhaseCollection) 
+is populated via a reflected method.</p>
 
+<p>To support a new Item type with a new ageing profile the only change is to drop a new (appropriately 
+annotated) method into the ItemAgeingProfile class. Job done.</p>
+
+<h2 id="limitations">Limitations</h2>
+<p>Using reflection to create a framework supporting new Item ageing profiles appears sound. 
+Yet the use of method reflection is not optimal.</p>
+
+<p>The most obvious limitation is that supporting many Item types becomes unwieldy. The ItemAgeingProfile 
+class growing too large with added ageing methods.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+<p>A further experiment would be to replace method reflection with class reflection. This addresses 
+ItemAgeingProfile class size with Ageing profiles algorithms implemented as new classes.</p>
+
+<p>The Item class also needs work - it feels more appropriate for the Item to handle its own ageing, 
+even if the Assessor selects the appropriate profile.</p>
+
+<p>It would also be a challenge to implement a further Calisthenics rule and restrict the Item class
+to two properties.</p>
 
   </div>
 
