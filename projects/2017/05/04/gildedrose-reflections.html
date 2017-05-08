@@ -58,27 +58,28 @@ change rate.</p>
 
 <h2 id="implementation">Implementation</h2>
 <p>The Assessor uses a different reflected method from a profile class (ItemAgeingProfile) to 
-determine an Item’s ageing profile. This method populates the ageing phase collection with 
-the necessary phases to implement the new ageing algorithm.</p>
+determine an Item’s ageing profile. This ageing profile consists of a collection of ageing 
+phases, representing the algorithm for how the Item should age.</p>
 
-<p>The ageing phase is implemented as a class (AgeingPhase) the “sell in” counter and quality change 
-rate as properties. The collection of ageing phases is implemented as a First Class Collection 
-i.e. a class that understands how the ageing phases can be manipulated. This collection (ItemAgeingPhaseCollection) 
-is populated via a reflected method.</p>
+<p>The ageing phase is implemented as a class (AgeingPhase) with properties for the “sell in” counter 
+and “quality change rate”. The collection of ageing phases is implemented as a First Class 
+Collection i.e. a class that understands how the ageing phases can be manipulated. This collection 
+(ItemAgeingPhaseCollection) is populated via the reflected method.</p>
 
 <p>To support a new Item type with a new ageing profile the only change is to drop a new (appropriately 
-annotated) method into the ItemAgeingProfile class. Job done.</p>
+annotated) method into the ItemAgeingProfile class. This method will be selected by the Assessor
+at run-time when it encounters an Item of the relevant type.</p>
 
 <h2 id="limitations">Limitations</h2>
 <p>Using reflection to create a framework supporting new Item ageing profiles appears sound. 
 Yet the use of method reflection is not optimal.</p>
 
 <p>The most obvious limitation is that supporting many Item types becomes unwieldy. The ItemAgeingProfile 
-class growing too large with added ageing methods.</p>
+class growing too large as ageing methods are added.</p>
 
 <h2 id="next-steps">Next Steps</h2>
 <p>A further experiment would be to replace method reflection with class reflection. This addresses 
-ItemAgeingProfile class size with Ageing profiles algorithms implemented as new classes.</p>
+ItemAgeingProfile class size, with Ageing profiles algorithms implemented as new classes.</p>
 
 <p>The Item class also needs work - it feels more appropriate for the Item to handle its own ageing, 
 even if the Assessor selects the appropriate profile.</p>
